@@ -1,0 +1,171 @@
+<html>
+<head>
+
+<style>
+
+h1
+{
+color: #515151;
+background-color: #FFF000;
+padding-left: 380px;
+}
+
+ol,
+li {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+
+body {
+  line-height: 1;
+  font-family: "Lato", sans-serif;
+  background-color: #EFF1F2;
+}
+
+.container {
+  width: 70%;
+  margin: 1em auto 3em;
+  border: 1px solid #efefef;
+}
+
+.panel,
+li {
+  display: flex;
+  /* Center everything inside .panel and li vertically */
+  align-items: center;
+  list-style-type: none;
+  padding: 10px;
+  border-bottom: 1px solid #efefef;
+  background-color: #E7E8EB;
+}
+
+.text-input {
+  border: 1px solid #dedede;
+  padding-left: 10px;
+  width: 70%;
+  height: 35px;
+  color: #555;
+}
+
+button {
+  color: #555;
+  background-color: #FFFFFF;
+  border: 1px solid #bbb;
+  outline: 0;
+  width: 100px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+
+
+.list li {
+  background-color: #3465A4;
+}
+
+.list li .delete  ,.list li .edit {
+  background-color: transparent;
+  border: 1px solid #3465A4;
+  color: #ddd;
+  visibility: visible;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.list label {
+  padding-right: 10px;
+  display: inline-block;
+  width: 70%;
+  font-size: 18px;
+  line-height: 24px;
+  color: #fcfcfc;
+  z-index: 2;
+  overflow: hidden;
+}
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"> </script>
+</head>
+
+<body>
+<h1>NOTE MAKER USING VUEJS </h1>
+<!-- Main Div Holding our Application Data -->
+<div class="container" id="note">
+  <!-- Panel for holding our input -->
+  <section class="panel">
+    <input type="text" placeholder="Enter notes here... " autofocus class="text-input" v-model="newnote" v-on:keyup.enter="addnote">
+    <button v-on:click="clearList">Delete all</button>
+  </section>
+
+  <!-- Unorderd list for holding our note items -->
+  <ol class="list">
+    <li v-for="note in noteList">
+   {{ note.text }}
+<button class="edit" @click="editnote(note)">EDIT</button>
+    <input type="text" v-model="note.text" @blur="doneEdit(note)" v-show="note == activeEdit">
+      <button class="delete" v-on:click="removenote(note)">DELETE</button>
+    </li>
+  </ol>
+</div>
+<script>
+
+//Create a new Vue instance
+new Vue({
+
+  //Bind this Vue instance to our container div with an ID of note
+  el: "#note",
+
+  //This is where the data for our application will be held
+  data: {
+    newnote: "",
+    noteList: [] ,
+ activeEdit: null
+  },
+
+  //This is where we will register the methods we want to use in our application
+  methods: {
+
+    addnote: function() {
+      //trim() is used to remove whitespace from both ends of a string
+      var note = this.newnote.trim();
+      //if note is not an empty string
+      if (note) {
+        //Push an object containing the note to the noteList array
+        this.noteList.push({
+          text: note,
+        });
+        //Reset newnote to an empty string so the input field is cleared
+        this.newnote = "";
+      }
+    },
+
+    removenote: function(note) {
+      var index = this.noteList.indexOf(note);
+      this.noteList.splice(index, 1);
+    },
+
+    clearList: function() {
+      //Setting noteList to an empty array clears the whole list
+      this.noteList = [];
+    },
+    editnote(note) {
+      this.activeEdit = note
+    },
+    doneEdit(note) {
+      if (!this.activeEdit) {
+        return
+      }
+      this.activeEdit = null
+      note.text = note.text.trim()
+    }
+
+  }
+});
+</script>
+</body>
+</html>
+
